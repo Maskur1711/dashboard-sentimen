@@ -1,8 +1,12 @@
 <script setup lang="ts">
+import SidebarNav from './components/SidebarNav.vue'
 </script>
 
 <template>
-  <button class="btn">Default</button>
+  <SidebarNav displayName="Maskur">
+    <router-view />
+  </SidebarNav>
+  
 </template>
 
 <style scoped></style>
