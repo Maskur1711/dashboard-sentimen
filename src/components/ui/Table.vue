@@ -105,9 +105,9 @@
                                 </td>
                             </tr>
                         </template>
-                        
+
                         <!-- Actual Data -->
-                        <tr v-else v-for="(item, index) in paginatedData" :key="item.channel" class="text-xs sm:text-sm">
+                        <tr v-else v-for="(item, index) in paginatedData" :key="item.channel" class="text-[13px]">
                             <td class="text-center font-semibold">{{ (currentPage - 1) * itemsPerPage + index + 1 }}
                             </td>
                             <td>
@@ -120,27 +120,27 @@
                             </td>
                             <td>
                                 <div class="flex flex-col">
-                                    <span class="font-mono text-base sm:text-lg font-semibold text-green-600">
+                                    <span class="font-mono text-[13px] font-semibold text-green-600">
                                         {{ item.positive.toLocaleString() }}
                                     </span>
                                 </div>
                             </td>
                             <td>
                                 <div class="flex flex-col">
-                                    <span class="font-mono text-base sm:text-lg font-semibold text-gray-600">
+                                    <span class="font-mono text-[13px] font-semibold text-gray-600">
                                         {{ item.neutral.toLocaleString() }}
                                     </span>
                                 </div>
                             </td>
                             <td>
                                 <div class="flex flex-col">
-                                    <span class="font-mono text-base sm:text-lg font-semibold text-red-600">
+                                    <span class="font-mono text-[13px] font-semibold text-red-600">
                                         {{ item.negative.toLocaleString() }}
                                     </span>
                                 </div>
                             </td>
                             <td>
-                                <span class="font-mono text-base sm:text-lg font-semibold">
+                                <span class="font-mono text-[13px] font-semibold">
                                     {{ item.total.toLocaleString() }}
                                 </span>
                             </td>
@@ -155,7 +155,7 @@
                                                     <div class="absolute bottom-0 w-full bg-green-500 transition-all duration-300 rounded-full"
                                                         :style="{ height: item.positivePercent + '%' }"></div>
                                                 </div>
-                                                <span class="text-xs text-green-600 font-medium">{{
+                                                <span class="text-[13px] text-green-600 font-medium">{{
                                                     item.positivePercent.toFixed(1) }}%</span>
                                             </div>
                                             <!-- Neutral Bar -->
@@ -164,7 +164,7 @@
                                                     <div class="absolute bottom-0 w-full bg-gray-500 transition-all duration-300 rounded-full"
                                                         :style="{ height: item.neutralPercent + '%' }"></div>
                                                 </div>
-                                                <span class="text-xs text-gray-600 font-medium">{{
+                                                <span class="text-[13px] text-gray-600 font-medium">{{
                                                     item.neutralPercent.toFixed(1) }}%</span>
                                             </div>
                                             <!-- Negative Bar -->
@@ -173,7 +173,7 @@
                                                     <div class="absolute bottom-0 w-full bg-red-500 transition-all duration-300 rounded-full"
                                                         :style="{ height: item.negativePercent + '%' }"></div>
                                                 </div>
-                                                <span class="text-xs text-red-600 font-medium">{{
+                                                <span class="text-[13px] text-red-600 font-medium">{{
                                                     item.negativePercent.toFixed(1) }}%</span>
                                             </div>
                                         </div>
@@ -187,7 +187,7 @@
 
             <!-- Pagination -->
             <div class="flex-shrink-0 mt-auto pt-4">
-                <Pagination v-if="totalPages > 1" :current-page="currentPage" :total-pages="totalPages"
+                <Pagination v-if="!isLoading && totalPages > 1" :current-page="currentPage" :total-pages="totalPages"
                     :total-items="filteredData.length" :items-per-page="itemsPerPage" @page-change="handlePageChange" />
             </div>
         </div>
@@ -199,6 +199,7 @@ import { computed, ref } from 'vue'
 import { Facebook, Instagram, Twitter, Youtube, Music, Newspaper } from 'lucide-vue-next'
 import Pagination from './pagination.vue'
 import Skeleton from './Skeleton.vue'
+import { useSentimentStore } from '../../stores/sentimentStore'
 
 interface ChannelData {
     channel: string
@@ -214,7 +215,6 @@ interface ChannelData {
 
 interface Props {
     title: string
-    responseData: any
     itemsPerPage?: number
 }
 
@@ -227,8 +227,8 @@ const sortField = ref<keyof ChannelData>('total')
 const sortDirection = ref<'asc' | 'desc'>('desc')
 const currentPage = ref(1)
 const isLoading = ref(true)
+const sentimentStore = useSentimentStore()
 
-// Simulate loading delay
 setTimeout(() => {
     isLoading.value = false
 }, 1500)
@@ -243,65 +243,9 @@ const iconMap = {
 }
 
 const channelData = computed<ChannelData[]>(() => {
-    const data = props.responseData?.data
-    if (!data) return []
-
-    const channels = [
-        {
-            channel: 'News',
-            icon: iconMap.News,
-            positive: data.news?.pie?.series?.[0] || 0,
-            neutral: data.news?.pie?.series?.[1] || 0,
-            negative: data.news?.pie?.series?.[2] || 0,
-            total: data.news?.total || 0
-        },
-        {
-            channel: 'Instagram',
-            icon: iconMap.Instagram,
-            positive: data.instagram?.pie?.series?.[0] || 0,
-            neutral: data.instagram?.pie?.series?.[1] || 0,
-            negative: data.instagram?.pie?.series?.[2] || 0,
-            total: data.instagram?.total || 0
-        },
-        {
-            channel: 'YouTube',
-            icon: iconMap.YouTube,
-            positive: data.youtube?.pie?.series?.[0] || 0,
-            neutral: data.youtube?.pie?.series?.[1] || 0,
-            negative: data.youtube?.pie?.series?.[2] || 0,
-            total: data.youtube?.total || 0
-        },
-        {
-            channel: 'Facebook',
-            icon: iconMap.Facebook,
-            positive: data.facebook?.pie?.series?.[0] || 0,
-            neutral: data.facebook?.pie?.series?.[1] || 0,
-            negative: data.facebook?.pie?.series?.[2] || 0,
-            total: data.facebook?.total || 0
-        },
-        {
-            channel: 'TikTok',
-            icon: iconMap.TikTok,
-            positive: data.tiktok?.pie?.series?.[0] || 0,
-            neutral: data.tiktok?.pie?.series?.[1] || 0,
-            negative: data.tiktok?.pie?.series?.[2] || 0,
-            total: data.tiktok?.total || 0
-        },
-        {
-            channel: 'Twitter',
-            icon: iconMap.Twitter,
-            positive: data.twitter?.pie?.series?.[0] || 0,
-            neutral: data.twitter?.pie?.series?.[1] || 0,
-            negative: data.twitter?.pie?.series?.[2] || 0,
-            total: data.twitter?.total || 0
-        }
-    ]
-
-    return channels.map(item => ({
+    return sentimentStore.channelData.map(item => ({
         ...item,
-        positivePercent: item.total > 0 ? (item.positive / item.total) * 100 : 0,
-        neutralPercent: item.total > 0 ? (item.neutral / item.total) * 100 : 0,
-        negativePercent: item.total > 0 ? (item.negative / item.total) * 100 : 0
+        icon: iconMap[item.channel as keyof typeof iconMap]
     }))
 })
 

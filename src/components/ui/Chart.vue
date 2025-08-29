@@ -6,7 +6,7 @@
                 <div v-for="channel in channels" :key="channel.name" class="bg-base-100 rounded-lg p-2 sm:p-3 shadow">
                     <h4 class="text-xs sm:text-sm font-medium mb-2 text-center">{{ channel.name }}</h4>
                     <div class="w-full h-[400px] sm:h-[180px] lg:h-[220px] relative">
-                        <!-- Loading State -->
+                        <!-- Loading -->
                         <div v-if="!isVisible || isLoading"
                             class="w-full h-full flex items-center justify-center bg-base-200 rounded-lg">
                             <div class="flex flex-col items-center gap-2">
@@ -15,7 +15,7 @@
                             </div>
                         </div>
 
-                        <!-- Chart Component -->
+                        <!-- Chart -->
                         <Bar v-else :id="`chart-${channel.key}`" :options="getChartOptions(channel.name)"
                             :data="getChartData(channel)" class="w-full h-full" />
                     </div>
@@ -28,8 +28,8 @@
 <script>
 import { Bar } from 'vue-chartjs'
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
-import responseData from '../../data/response.json'
 import { ref, onMounted, onUnmounted } from 'vue'
+import { useSentimentStore } from '../../stores/sentimentStore'
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
@@ -40,6 +40,7 @@ export default {
         const chartContainer = ref(null)
         const isVisible = ref(false)
         const isLoading = ref(false)
+        const sentimentStore = useSentimentStore()
         let observer = null
 
         const channels = [
@@ -87,12 +88,13 @@ export default {
             chartContainer,
             isVisible,
             isLoading,
-            channels
+            channels,
+            sentimentStore
         }
     },
     methods: {
         getChartData(channel) {
-            const data = responseData.data[channel.key]
+            const data = this.sentimentStore.getChannelData(channel.key)
             return {
                 labels: ['Pos', 'Net', 'Neg'],
                 datasets: [{
