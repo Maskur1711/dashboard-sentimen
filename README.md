@@ -1,3 +1,6 @@
+## Link Demo
+https://dashboard-sentimen.vercel.app/
+
 ## 🚀 Cara Menjalankan Proyek
 
 ### Prerequisites
