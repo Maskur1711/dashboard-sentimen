@@ -47,17 +47,17 @@ const endItem = computed(() => {
 <template>
     <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
         <!-- Info Text -->
-        <div class="text-sm text-gray-600">
-            Menampilkan <span class="font-medium text-gray-900">{{ startItem }}</span> - 
-            <span class="font-medium text-gray-900">{{ endItem }}</span> dari 
-            <span class="font-medium text-gray-900">{{ totalItems }}</span> data
+        <div class="text-sm text-gray-600 dark:text-white">
+            Menampilkan <span class="font-medium text-gray-900 dark:text-white">{{ startItem }}</span> - 
+            <span class="font-medium text-gray-900 dark:text-white">{{ endItem }}</span> dari 
+            <span class="font-medium text-gray-900 dark:text-white">{{ totalItems }}</span> data
         </div>
 
         <!-- Pagination Controls -->
         <div class="flex items-center gap-2">
             <!-- First Page -->
             <button 
-                class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                class="p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
                 :disabled="currentPage === 1"
                 @click="$emit('page-change', 1)"
             >
@@ -66,7 +66,7 @@ const endItem = computed(() => {
 
             <!-- Previous Page -->
             <button 
-                class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                class="p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
                 :disabled="currentPage === 1"
                 @click="$emit('page-change', currentPage - 1)"
             >
@@ -81,7 +81,7 @@ const endItem = computed(() => {
                     class="px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200"
                     :class="page === currentPage 
                         ? 'bg-blue-600 text-white shadow-sm' 
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'"
+                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700'"
                     @click="$emit('page-change', page)"
                 >
                     {{ page }}
@@ -90,7 +90,7 @@ const endItem = computed(() => {
 
             <!-- Next Page -->
             <button 
-                class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                class="p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
                 :disabled="currentPage === totalPages"
                 @click="$emit('page-change', currentPage + 1)"
             >
@@ -99,7 +99,7 @@ const endItem = computed(() => {
 
             <!-- Last Page -->
             <button 
-                class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                class="p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
                 :disabled="currentPage === totalPages"
                 @click="$emit('page-change', totalPages)"
             >
