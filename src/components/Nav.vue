@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Bell, Settings, User } from 'lucide-vue-next'
+import { User } from 'lucide-vue-next'
 
 </script>
 
