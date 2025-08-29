@@ -188,9 +188,7 @@ watch(searchQuery, resetPage)
                                     </svg>
                                 </button>
                             </th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                                Distribusi
-                            </th>
+
                         </tr>
                     </thead>
 
@@ -220,24 +218,7 @@ watch(searchQuery, resetPage)
                                 <td class="px-6 py-4">
                                     <Skeleton width="20" height="6" />
                                 </td>
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center justify-center">
-                                        <div class="flex gap-2">
-                                            <div class="flex flex-col items-center gap-1">
-                                                <Skeleton width="6" height="12" />
-                                                <Skeleton width="12" height="3" />
-                                            </div>
-                                            <div class="flex flex-col items-center gap-1">
-                                                <Skeleton width="6" height="12" />
-                                                <Skeleton width="12" height="3" />
-                                            </div>
-                                            <div class="flex flex-col items-center gap-1">
-                                                <Skeleton width="6" height="12" />
-                                                <Skeleton width="12" height="3" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
+
                             </tr>
                         </template>
 
@@ -274,39 +255,48 @@ watch(searchQuery, resetPage)
                                     {{ item.total.toLocaleString() }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center justify-center">
-                                    <div class="flex gap-2">
-                                        <!-- Positive Bar -->
-                                        <div class="flex flex-col items-center gap-1">
-                                            <div class="w-6 h-12 bg-gray-100 dark:bg-gray-700 rounded-full relative overflow-hidden">
-                                                <div class="absolute bottom-0 w-full bg-green-500 transition-all duration-500 ease-out rounded-full"
-                                                    :style="{ height: item.positivePercent + '%' }"></div>
-                                            </div>
-                                            <span class="text-xs font-medium text-green-600 dark:text-green-400">{{ item.positivePercent.toFixed(1) }}%</span>
-                                        </div>
-                                        <!-- Neutral Bar -->
-                                        <div class="flex flex-col items-center gap-1">
-                                            <div class="w-6 h-12 bg-gray-100 dark:bg-gray-700 rounded-full relative overflow-hidden">
-                                                <div class="absolute bottom-0 w-full bg-gray-500 transition-all duration-500 ease-out rounded-full"
-                                                    :style="{ height: item.neutralPercent + '%' }"></div>
-                                            </div>
-                                            <span class="text-xs font-medium text-gray-600 dark:text-gray-400">{{ item.neutralPercent.toFixed(1) }}%</span>
-                                        </div>
-                                        <!-- Negative Bar -->
-                                        <div class="flex flex-col items-center gap-1">
-                                            <div class="w-6 h-12 bg-gray-100 dark:bg-gray-700 rounded-full relative overflow-hidden">
-                                                <div class="absolute bottom-0 w-full bg-red-500 transition-all duration-500 ease-out rounded-full"
-                                                    :style="{ height: item.negativePercent + '%' }"></div>
-                                            </div>
-                                            <span class="text-xs font-medium text-red-600 dark:text-red-400">{{ item.negativePercent.toFixed(1) }}%</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </td>
+
                         </tr>
                     </tbody>
                 </table>
+            </div>
+        </div>
+
+        <!-- Distribution Summary -->
+        <div v-if="!isLoading" class="border-t border-gray-200/60 dark:border-gray-700/60 bg-gray-50/30 dark:bg-gray-700/30 px-6 py-10 items-center">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <div v-for="item in paginatedData" :key="item.channel" class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center gap-2 mb-3">
+                        <component v-if="item.icon" :is="item.icon" class="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                        <h4 class="text-sm font-semibold text-gray-900 dark:text-white">{{ item.channel }}</h4>
+                    </div>
+                    <div class="space-y-2">
+                        <!-- Positive -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                <span class="text-xs text-gray-600 dark:text-gray-400">Positif</span>
+                            </div>
+                            <span class="text-sm font-semibold text-green-600 dark:text-green-400">{{ item.positivePercent.toFixed(1) }}%</span>
+                        </div>
+                        <!-- Neutral -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-2 bg-gray-500 rounded-full"></div>
+                                <span class="text-xs text-gray-600 dark:text-gray-400">Netral</span>
+                            </div>
+                            <span class="text-sm font-semibold text-gray-600 dark:text-gray-400">{{ item.neutralPercent.toFixed(1) }}%</span>
+                        </div>
+                        <!-- Negative -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+                                <span class="text-xs text-gray-600 dark:text-gray-400">Negatif</span>
+                            </div>
+                            <span class="text-sm font-semibold text-red-600 dark:text-red-400">{{ item.negativePercent.toFixed(1) }}%</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 

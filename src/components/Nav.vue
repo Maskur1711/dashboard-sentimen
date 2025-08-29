@@ -19,22 +19,7 @@ import { Bell, Settings, User } from 'lucide-vue-next'
             Dashboard Sentimen
           </h1>
         </div>
-
-        <!-- Right Side Actions -->
         <div class="flex items-center space-x-3">
-          <!-- Notifications -->
-          <button
-            class="relative p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all duration-200">
-            <Bell class="h-5 w-5" />
-            <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-          </button>
-
-          <!-- Settings -->
-          <button
-            class="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all duration-200">
-            <Settings class="h-5 w-5" />
-          </button>
-
           <!-- User Profile -->
           <div class="relative">
             <button
