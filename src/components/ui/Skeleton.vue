@@ -1,15 +1,3 @@
-<template>
-    <div 
-        :class="[
-            'skeleton',
-            widthClass,
-            heightClass,
-            shapeClass,
-            additionalClasses
-        ]"
-    ></div>
-</template>
-
 <script setup lang="ts">
 import { computed } from 'vue'
 
@@ -51,3 +39,12 @@ const shapeClass = computed(() => {
 
 const additionalClasses = computed(() => props.class)
 </script>
+<template>
+    <div :class="[
+        'skeleton',
+        widthClass,
+        heightClass,
+        shapeClass,
+        additionalClasses
+    ]"></div>
+</template>
