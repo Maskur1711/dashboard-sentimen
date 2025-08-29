@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { ChevronsLeft, ChevronsRight } from 'lucide-vue-next'
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-vue-next'
 import { computed } from 'vue'
-
 
 interface Props {
     currentPage: number
@@ -46,28 +45,77 @@ const endItem = computed(() => {
 </script>
 
 <template>
-    <div class="text-xs sm:text-sm text-base-content/60 text-center sm:text-left">
-        Menampilkan data {{ startItem }} - {{ endItem }} dari {{ totalItems }} total Data
-    </div>
-    <div class="flex justify-center items-center gap-3 sm:gap-4 mt-4 sm:mt-6">
-        <div class="join">
-            <button class="join-item btn btn-sm sm:btn-md" :disabled="currentPage === 1"
-                :class="{ 'hover:bg-base-200 hover:cursor-not-allowed': currentPage === 1 }"
-                @click="$emit('page-change', currentPage - 1)">
-                <ChevronsLeft class="w-3 h-3" />
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <!-- Info Text -->
+        <div class="text-sm text-gray-600">
+            Menampilkan <span class="font-medium text-gray-900">{{ startItem }}</span> - 
+            <span class="font-medium text-gray-900">{{ endItem }}</span> dari 
+            <span class="font-medium text-gray-900">{{ totalItems }}</span> data
+        </div>
+
+        <!-- Pagination Controls -->
+        <div class="flex items-center gap-2">
+            <!-- First Page -->
+            <button 
+                class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                :disabled="currentPage === 1"
+                @click="$emit('page-change', 1)"
+            >
+                <ChevronsLeft class="w-4 h-4" />
             </button>
 
-            <button v-for="page in visiblePages" :key="page" class="join-item btn btn-sm sm:btn-md"
-                :class="{ 'btn-active': page === currentPage }" @click="$emit('page-change', page)">
-                {{ page }}
+            <!-- Previous Page -->
+            <button 
+                class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                :disabled="currentPage === 1"
+                @click="$emit('page-change', currentPage - 1)"
+            >
+                <ChevronLeft class="w-4 h-4" />
             </button>
 
-            <button class="join-item btn btn-sm sm:btn-md" :disabled="currentPage === totalPages"
-                :class="{ 'hover:bg-base-200 hover:cursor-not-allowed': currentPage === totalPages }"
-                @click="$emit('page-change', currentPage + 1)">
-                <ChevronsRight class="w-3 h-3" />
+            <!-- Page Numbers -->
+            <div class="flex items-center gap-1">
+                <button 
+                    v-for="page in visiblePages" 
+                    :key="page" 
+                    class="px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200"
+                    :class="page === currentPage 
+                        ? 'bg-blue-600 text-white shadow-sm' 
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'"
+                    @click="$emit('page-change', page)"
+                >
+                    {{ page }}
+                </button>
+            </div>
+
+            <!-- Next Page -->
+            <button 
+                class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                :disabled="currentPage === totalPages"
+                @click="$emit('page-change', currentPage + 1)"
+            >
+                <ChevronRight class="w-4 h-4" />
+            </button>
+
+            <!-- Last Page -->
+            <button 
+                class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                :disabled="currentPage === totalPages"
+                @click="$emit('page-change', totalPages)"
+            >
+                <ChevronsRight class="w-4 h-4" />
             </button>
         </div>
     </div>
-
 </template>
+
+<style scoped>
+/* Performance optimized hover effects */
+button:not(:disabled):hover {
+    transform: translateY(-1px);
+}
+
+button:not(:disabled):active {
+    transform: translateY(0);
+}
+</style>

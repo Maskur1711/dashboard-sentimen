@@ -1,23 +1,38 @@
 <template>
-    <div class="card bg-base-200 shadow-xl" ref="chartContainer">
-        <div class="card-body">
-            <h3 class="text-base sm:text-lg font-semibold mb-4 text-gray-900 dark:text-white">Sentimen Per Platform</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-                <div v-for="channel in channels" :key="channel.name" class="bg-base-100 rounded-lg p-2 sm:p-3 shadow">
-                    <h4 class="text-xs sm:text-sm font-medium mb-2 text-center">{{ channel.name }}</h4>
-                    <div class="w-full h-[400px] sm:h-[180px] lg:h-[220px] relative">
-                        <!-- Loading -->
-                        <div v-if="!isVisible || isLoading"
-                            class="w-full h-full flex items-center justify-center bg-base-200 rounded-lg">
-                            <div class="flex flex-col items-center gap-2">
-                                <span class="loading loading-ring loading-xs"></span>
-                                <span class="text-sm text-base-content/60">Mohon Tunggu...</span>
+    <div class="h-full flex flex-col bg-white">
+        <!-- Header -->
+        <div class="p-6 border-b border-gray-200/60">
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">Sentimen Per Platform</h3>
+            <p class="text-sm text-gray-600">Visualisasi distribusi sentimen dari berbagai platform</p>
+        </div>
+
+        <!-- Chart -->
+        <div class="flex-1 p-6 overflow-x-auto">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div v-for="channel in channels" :key="channel.name"
+                    class="bg-gray-50/50 rounded-xl p-4 border border-gray-200/60 hover:shadow-md transition-all duration-300 group">
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="text-sm font-semibold text-gray-900">{{ channel.name }}</h4>
+                        <div class="w-2 h-2 bg-blue-500 rounded-full group-hover:bg-blue-600 transition-colors"></div>
+                    </div>
+
+                    <div class="w-full h-[180px] lg:h-[220px] relative">
+                        <!-- Loading State -->
+                        <div v-if="isLoading"
+                            class="w-full h-full flex items-center justify-center bg-white rounded-lg border border-gray-200/60">
+                            <div class="flex flex-col items-center gap-3">
+                                <div
+                                    class="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin">
+                                </div>
+                                <span class="text-sm text-gray-500">Memuat chart...</span>
                             </div>
                         </div>
 
                         <!-- Chart -->
-                        <Bar v-else :id="`chart-${channel.key}`" :options="getChartOptions(channel.name)"
-                            :data="getChartData(channel)" class="w-full h-full" />
+                        <div v-else class="w-full h-full bg-white rounded-lg border border-gray-200/60 p-2">
+                            <Bar :id="`chart-${channel.key}`" :options="getChartOptions(channel.name)"
+                                :data="getChartData(channel)" class="w-full h-full" />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -28,7 +43,7 @@
 <script>
 import { Bar } from 'vue-chartjs'
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useSentimentStore } from '../../stores/sentimentStore'
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
@@ -37,11 +52,8 @@ export default {
     name: 'SentimentChart',
     components: { Bar },
     setup() {
-        const chartContainer = ref(null)
-        const isVisible = ref(false)
-        const isLoading = ref(false)
+        const isLoading = ref(true)
         const sentimentStore = useSentimentStore()
-        let observer = null
 
         const channels = [
             { name: 'News', key: 'news' },
@@ -53,40 +65,12 @@ export default {
         ]
 
         onMounted(() => {
-            observer = new IntersectionObserver(
-                (entries) => {
-                    entries.forEach((entry) => {
-                        if (entry.isIntersecting && !isVisible.value) {
-                            isLoading.value = true
-
-                            setTimeout(() => {
-                                isVisible.value = true
-                                isLoading.value = false
-                                observer.unobserve(entry.target)
-                            }, 500)
-                        }
-                    })
-                },
-                {
-                    threshold: 0.1, 
-                    rootMargin: '100px'
-                }
-            )
-
-            if (chartContainer.value) {
-                observer.observe(chartContainer.value)
-            }
-        })
-
-        onUnmounted(() => {
-            if (observer) {
-                observer.disconnect()
-            }
+            setTimeout(() => {
+                isLoading.value = false
+            }, 1000)
         })
 
         return {
-            chartContainer,
-            isVisible,
             isLoading,
             channels,
             sentimentStore
@@ -95,17 +79,30 @@ export default {
     methods: {
         getChartData(channel) {
             const data = this.sentimentStore.getChannelData(channel.key)
+            
+            const chartData = data?.pie?.series || [0, 0, 0]
+            
             return {
-                labels: ['Pos', 'Net', 'Neg'],
+                labels: ['Positif', 'Netral', 'Negatif'],
                 datasets: [{
                     data: [
-                        data?.pie?.series?.[0] || 0,
-                        data?.pie?.series?.[1] || 0,
-                        data?.pie?.series?.[2] || 0
+                        chartData[0] || 0,
+                        chartData[1] || 0,
+                        chartData[2] || 0
                     ],
-                    backgroundColor: ['#3EC764', '#B3B6C6', '#ED3E3E'],
-                    borderColor: ['#3EC764', '#B3B6C6', '#ED3E3E'],
-                    borderWidth: 1
+                    backgroundColor: [
+                        'rgba(34, 197, 94, 0.8)',
+                        'rgba(156, 163, 175, 0.8)',
+                        'rgba(239, 68, 68, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgb(34, 197, 94)',
+                        'rgb(156, 163, 175)',
+                        'rgb(239, 68, 68)'
+                    ],
+                    borderWidth: 2,
+                    borderRadius: 8,
+                    borderSkipped: false,
                 }]
             }
         },
@@ -118,10 +115,18 @@ export default {
                         display: false
                     },
                     tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: 'white',
+                        bodyColor: 'white',
+                        borderColor: 'rgba(255, 255, 255, 0.1)',
+                        borderWidth: 1,
+                        cornerRadius: 8,
+                        displayColors: false,
                         callbacks: {
+                            title: () => channelName,
                             label: (context) => {
-                                const labels = ['Positive', 'Neutral', 'Negative']
-                                return labels[context.dataIndex] + ': ' + context.parsed.y.toLocaleString()
+                                const labels = ['Positif', 'Netral', 'Negatif']
+                                return `${labels[context.dataIndex]}: ${context.parsed.y.toLocaleString()}`
                             }
                         }
                     }
@@ -134,8 +139,10 @@ export default {
                         },
                         ticks: {
                             font: {
-                                size: 10
+                                size: 11,
+                                weight: '500'
                             },
+                            color: '#6b7280',
                             maxRotation: 0,
                             minRotation: 0
                         }
@@ -143,10 +150,16 @@ export default {
                     y: {
                         display: true,
                         beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)',
+                            drawBorder: false
+                        },
                         ticks: {
                             font: {
-                                size: 10
+                                size: 11,
+                                weight: '500'
                             },
+                            color: '#6b7280',
                             callback: function (value) {
                                 return value >= 1000 ? (value / 1000).toFixed(0) + 'k' : value
                             },
@@ -156,14 +169,22 @@ export default {
                 },
                 layout: {
                     padding: {
-                        top: 10,
-                        bottom: 5,
-                        left: 5,
-                        right: 5
+                        top: 15,
+                        bottom: 10,
+                        left: 10,
+                        right: 10
                     }
+                },
+                animation: {
+                    duration: 1000,
+                    easing: 'easeOutQuart'
                 }
             }
         }
     }
 }
 </script>
+
+<style scoped>
+
+</style>
